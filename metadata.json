@@ -1,0 +1,8 @@
+{
+  "uuid": "win11-menu@husain",
+  "name": "Win11 Taskbar & Start",
+  "description": "A Windows 11 style taskbar and Start menu: pinned apps, window previews on hover, tray, and theme, color and opacity settings.",
+  "shell-version": ["50"],
+  "settings-schema": "org.gnome.shell.extensions.win11-menu",
+  "url": "https://github.com/colozha/win11-menu-for-gnome"
+}

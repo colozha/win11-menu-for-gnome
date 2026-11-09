@@ -1,0 +1,222 @@
+/* Win11 Taskbar & Start. Theme classes: .w11-dark / .w11-light on each root.
+   Backgrounds are set inline from settings (color + opacity). */
+
+/* ---------- Taskbar ---------- */
+.w11-taskbar {
+  padding: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.82em;
+}
+.w11-taskbar.w11-light { border-top-color: rgba(0, 0, 0, 0.07); color: #1a1a1a; }
+.w11-taskbar.w11-dark { color: #ffffff; }
+
+.w11-apps { spacing: 4px; }
+
+.w11-tb-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  transition-duration: 120ms;
+}
+.w11-dark .w11-tb-button:hover { background-color: rgba(255, 255, 255, 0.07); }
+.w11-dark .w11-tb-button:active { background-color: rgba(255, 255, 255, 0.04); }
+.w11-dark .w11-tb-button.w11-focused { background-color: rgba(255, 255, 255, 0.09); }
+.w11-dark .w11-tb-button.w11-focused:hover { background-color: rgba(255, 255, 255, 0.12); }
+.w11-light .w11-tb-button:hover { background-color: rgba(0, 0, 0, 0.05); }
+.w11-light .w11-tb-button:active { background-color: rgba(0, 0, 0, 0.03); }
+.w11-light .w11-tb-button.w11-focused { background-color: rgba(255, 255, 255, 0.75); }
+.w11-light .w11-tb-button.w11-focused:hover { background-color: rgba(255, 255, 255, 0.9); }
+.w11-tb-button.w11-attention { background-color: rgba(255, 140, 0, 0.35); }
+
+/* Start: the outer button is the hit area (full height, + left gutter when left-aligned);
+   the inner bin draws the visible 40px button. */
+.w11-start-hit.w11-edge { padding-left: 4px; }
+.w11-dark .w11-start-hit:hover .w11-start-inner { background-color: rgba(255, 255, 255, 0.07); }
+.w11-dark .w11-start-hit:active .w11-start-inner { background-color: rgba(255, 255, 255, 0.04); }
+.w11-light .w11-start-hit:hover .w11-start-inner { background-color: rgba(0, 0, 0, 0.05); }
+.w11-light .w11-start-hit:active .w11-start-inner { background-color: rgba(0, 0, 0, 0.03); }
+
+/* Show desktop: thin translucent strip at the very edge */
+.w11-show-desktop { width: 8px; transition-duration: 120ms; }
+.w11-dark .w11-show-desktop-right { border-left: 1px solid rgba(255, 255, 255, 0.18); }
+.w11-dark .w11-show-desktop-left { border-right: 1px solid rgba(255, 255, 255, 0.18); }
+.w11-light .w11-show-desktop-right { border-left: 1px solid rgba(0, 0, 0, 0.15); }
+.w11-light .w11-show-desktop-left { border-right: 1px solid rgba(0, 0, 0, 0.15); }
+.w11-dark .w11-show-desktop:hover { background-color: rgba(255, 255, 255, 0.12); }
+.w11-light .w11-show-desktop:hover { background-color: rgba(0, 0, 0, 0.08); }
+.w11-dark .w11-show-desktop:active { background-color: rgba(255, 255, 255, 0.06); }
+.w11-light .w11-show-desktop:active { background-color: rgba(0, 0, 0, 0.04); }
+
+.w11-start-icon { color: -st-accent-color; }
+/* Search icon and tray text inherit the taskbar color, so a custom text color reaches them. */
+
+.w11-indicator {
+  height: 3px;
+  width: 6px;
+  border-radius: 2px;
+  margin-bottom: 1px;
+  transition-duration: 160ms;
+}
+.w11-dark .w11-indicator { background-color: rgba(255, 255, 255, 0.55); }
+.w11-light .w11-indicator { background-color: rgba(0, 0, 0, 0.45); }
+.w11-indicator.w11-focused { width: 16px; background-color: -st-accent-color; }
+
+/* Tray: GNOME's own panel buttons, re-skinned (they lose #panel styling here; GNOME only
+   colors .panel-button under #panel, so their text inherits .w11-taskbar's color). */
+.w11-tray { spacing: 2px; padding-right: 4px; }
+.w11-tray .panel-button {
+  border-radius: 4px;
+  padding: 0 6px;
+  margin: 4px 0;
+  -natural-hpadding: 6px;
+  -minimum-hpadding: 4px;
+  font-weight: normal;
+  transition-duration: 120ms;
+}
+.w11-dark .w11-tray .panel-button:hover,
+.w11-dark .w11-tray .panel-button:checked { background-color: rgba(255, 255, 255, 0.07); }
+.w11-light .w11-tray .panel-button:hover,
+.w11-light .w11-tray .panel-button:checked { background-color: rgba(0, 0, 0, 0.05); }
+.w11-tray .system-status-icon { icon-size: 16px; padding: 0 2px; }
+.w11-tray .panel-status-indicators-box { spacing: 8px; }
+.w11-tray .clock-display-box { spacing: 4px; }
+.w11-tray .messages-indicator { icon-size: 16px; }
+
+.w11-clock { text-align: right; padding: 0 4px; }
+.w11-clock-line { font-size: 1em; text-align: right; }
+
+/* ---------- Window preview ---------- */
+.w11-preview {
+  padding: 8px;
+  spacing: 8px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  font-size: 0.82em;
+}
+.w11-preview.w11-dark { background-color: #2b2b2b; border: 1px solid rgba(255, 255, 255, 0.08); color: #ffffff; }
+.w11-preview.w11-light { background-color: #f3f3f3; border: 1px solid rgba(0, 0, 0, 0.08); color: #1a1a1a; }
+
+.w11-card { border-radius: 6px; padding: 6px; }
+.w11-dark .w11-card:hover { background-color: rgba(255, 255, 255, 0.07); }
+.w11-light .w11-card:hover { background-color: rgba(0, 0, 0, 0.05); }
+.w11-card-header { spacing: 8px; padding-bottom: 6px; }
+.w11-card-title { width: 160px; }
+.w11-card-close { width: 22px; height: 22px; border-radius: 4px; }
+.w11-card-close:hover { background-color: #c42b1c; color: #ffffff; }
+
+/* ---------- Start menu ---------- */
+.w11-start {
+  width: 720px;
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+  font-size: 0.82em;
+}
+.w11-start.w11-dark { border: 1px solid rgba(255, 255, 255, 0.08); color: #ffffff; }
+.w11-start.w11-light { border: 1px solid rgba(0, 0, 0, 0.1); color: #1a1a1a; }
+
+/* Search: pill with an even 1px border; focus tints the whole border (a thick underline
+   bends around the pill's rounded ends and looks broken). */
+.w11-search-wrap { padding: 24px 40px 12px; }
+.w11-search {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  caret-color: -st-accent-color;
+  selection-background-color: -st-accent-color;
+  selected-color: -st-accent-fg-color;
+  font-size: 1.05em;
+  transition-duration: 120ms;
+}
+.w11-dark .w11-search { background-color: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.08); color: #ffffff; }
+.w11-light .w11-search { background-color: #ffffff; border-color: rgba(0, 0, 0, 0.08); color: #1a1a1a; }
+.w11-search:focus { border-color: -st-accent-color; box-shadow: none; outline: none; }
+.w11-dark .w11-search StLabel.hint-text { color: rgba(255, 255, 255, 0.6); }
+.w11-light .w11-search StLabel.hint-text { color: rgba(0, 0, 0, 0.55); }
+.w11-search StIcon { icon-size: 16px; padding-right: 10px; }
+
+.w11-body { padding: 8px 40px 16px; }
+.w11-section { spacing: 12px; padding-bottom: 28px; }
+.w11-section-header { padding: 0 8px 0 12px; min-height: 28px; }
+.w11-section-title { font-weight: 600; font-size: 1.14em; }
+
+.w11-pill {
+  height: 26px;
+  padding: 0 8px 0 10px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 0.92em;
+  transition-duration: 120ms;
+}
+.w11-pill-box { spacing: 6px; }
+.w11-pill StIcon { icon-size: 12px; }
+.w11-dark .w11-pill { background-color: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.06); }
+.w11-dark .w11-pill:hover, .w11-dark .w11-pill:focus { background-color: rgba(255, 255, 255, 0.1); }
+.w11-light .w11-pill { background-color: rgba(255, 255, 255, 0.7); border-color: rgba(0, 0, 0, 0.08); }
+.w11-light .w11-pill:hover, .w11-light .w11-pill:focus { background-color: rgba(0, 0, 0, 0.04); }
+
+.w11-tile {
+  width: 104px;
+  height: 88px;
+  border-radius: 4px;
+  padding: 8px 2px 4px;
+  transition-duration: 120ms;
+}
+.w11-tile-box { spacing: 8px; }
+.w11-tile-label { text-align: center; width: 96px; height: 2.6em; }
+.w11-avatar { border-radius: 999px; }
+.w11-new { font-size: 0.85em; color: -st-accent-color; text-align: center; }
+
+.w11-row {
+  border-radius: 4px;
+  padding: 8px 12px;
+  transition-duration: 120ms;
+}
+.w11-row-box { spacing: 12px; }
+.w11-dark .w11-sub { color: rgba(255, 255, 255, 0.72); }
+.w11-light .w11-sub { color: rgba(0, 0, 0, 0.62); }
+.w11-sub { font-size: 0.92em; }
+.w11-letter { padding: 12px 12px 4px; font-weight: 600; }
+
+.w11-dark .w11-tile:hover, .w11-dark .w11-row:hover,
+.w11-dark .w11-tile:focus, .w11-dark .w11-row:focus { background-color: rgba(255, 255, 255, 0.06); }
+.w11-light .w11-tile:hover, .w11-light .w11-row:hover,
+.w11-light .w11-tile:focus, .w11-light .w11-row:focus { background-color: rgba(0, 0, 0, 0.04); }
+.w11-tile:active, .w11-row:active { background-color: transparent; }
+
+.w11-best { padding: 16px; }
+.w11-empty { padding: 32px 12px; text-align: center; }
+.w11-dark .w11-empty { color: rgba(255, 255, 255, 0.72); }
+.w11-light .w11-empty { color: rgba(0, 0, 0, 0.62); }
+
+.w11-footer {
+  height: 64px;
+  padding: 0 48px;
+  border-radius: 0 0 8px 8px;
+}
+.w11-dark .w11-footer { background-color: rgba(0, 0, 0, 0.18); border-top: 1px solid rgba(255, 255, 255, 0.06); }
+.w11-light .w11-footer { background-color: rgba(0, 0, 0, 0.03); border-top: 1px solid rgba(0, 0, 0, 0.06); }
+.w11-user { padding: 6px 10px; border-radius: 4px; }
+.w11-user-box { spacing: 12px; }
+.w11-footer-icons { spacing: 4px; }
+.w11-icon-button { width: 36px; height: 36px; border-radius: 4px; }
+.w11-icon-button StIcon { icon-size: 16px; }
+.w11-dark .w11-user:hover, .w11-dark .w11-icon-button:hover,
+.w11-dark .w11-user:focus, .w11-dark .w11-icon-button:focus { background-color: rgba(255, 255, 255, 0.07); }
+.w11-light .w11-user:hover, .w11-light .w11-icon-button:hover,
+.w11-light .w11-user:focus, .w11-light .w11-icon-button:focus { background-color: rgba(0, 0, 0, 0.05); }
+
+/* Scrollbar: thin, theme-tinted */
+.w11-start StScrollBar { padding: 2px; }
+.w11-dark .w11-start StScrollBar StButton#vhandle, .w11-start.w11-dark StScrollBar StButton#vhandle { background-color: rgba(255, 255, 255, 0.3); border-radius: 4px; }
+.w11-start.w11-light StScrollBar StButton#vhandle { background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; }
+
+/* Popup menus we own (context, power, view, user) */
+.w11-menu.popup-menu .popup-menu-content { border-radius: 8px; padding: 4px; }
+.w11-menu.w11-dark .popup-menu-content { background-color: #2c2c2c; border: 1px solid rgba(255, 255, 255, 0.08); color: #ffffff; }
+.w11-menu.w11-light .popup-menu-content { background-color: #f9f9f9; border: 1px solid rgba(0, 0, 0, 0.08); color: #1a1a1a; }
+.w11-menu .popup-menu-item { border-radius: 4px; padding: 6px 12px; spacing: 12px; font-size: 0.9em; }
+.w11-menu .popup-menu-item .popup-menu-icon { icon-size: 16px; }
+.w11-menu.w11-dark .popup-menu-item:hover, .w11-menu.w11-dark .popup-menu-item:focus { background-color: rgba(255, 255, 255, 0.07); }
+.w11-menu.w11-light .popup-menu-item:hover, .w11-menu.w11-light .popup-menu-item:focus { background-color: rgba(0, 0, 0, 0.05); color: #1a1a1a; }
+.w11-menu .popup-separator-menu-item-separator { background-color: rgba(128, 128, 128, 0.25); }

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.win11-menu" path="/org/gnome/shell/extensions/win11-menu/">
+    <key name="theme" type="s">
+      <choices><choice value="system"/><choice value="dark"/><choice value="light"/></choices>
+      <default>'system'</default>
+      <summary>Theme</summary>
+    </key>
+    <key name="accent-color" type="s">
+      <default>''</default>
+      <summary>Accent color (hex); empty uses the system accent</summary>
+    </key>
+    <key name="taskbar-color" type="s">
+      <default>''</default>
+      <summary>Taskbar background (hex); empty uses the theme color</summary>
+    </key>
+    <key name="taskbar-opacity" type="i">
+      <range min="0" max="100"/>
+      <default>85</default>
+      <summary>Taskbar opacity in percent</summary>
+    </key>
+    <key name="start-color" type="s">
+      <default>''</default>
+      <summary>Start menu background (hex); empty uses the theme color</summary>
+    </key>
+    <key name="start-opacity" type="i">
+      <range min="0" max="100"/>
+      <default>95</default>
+      <summary>Start menu opacity in percent</summary>
+    </key>
+    <key name="taskbar-text-color" type="s">
+      <default>''</default>
+      <summary>Taskbar text color (hex); empty uses the theme or auto contrast</summary>
+    </key>
+    <key name="start-text-color" type="s">
+      <default>''</default>
+      <summary>Start menu text color (hex); empty uses the theme or auto contrast</summary>
+    </key>
+    <key name="auto-contrast" type="b">
+      <default>true</default>
+      <summary>Pick light or dark text automatically on a custom background</summary>
+    </key>
+    <key name="taskbar-alignment" type="s">
+      <choices><choice value="left"/><choice value="center"/></choices>
+      <default>'left'</default>
+      <summary>Taskbar alignment</summary>
+    </key>
+    <key name="show-search-button" type="b">
+      <default>true</default>
+      <summary>Show the search button on the taskbar</summary>
+    </key>
+    <key name="taskbar-icon-size" type="i">
+      <range min="16" max="48"/>
+      <default>24</default>
+      <summary>Taskbar app icon size in pixels</summary>
+    </key>
+    <key name="clock-style" type="s">
+      <choices>
+        <choice value="time-date"/><choice value="time-date-locale"/><choice value="time-weekday"/>
+        <choice value="single-line"/><choice value="time"/><choice value="custom"/>
+      </choices>
+      <default>'time-date'</default>
+      <summary>Taskbar date and time style</summary>
+    </key>
+    <key name="clock-custom-format" type="s">
+      <default>'%H:%M%n%a, %d %b %Y'</default>
+      <summary>Custom clock format (GLib.DateTime format, %n = new line)</summary>
+    </key>
+    <key name="show-desktop-button" type="s">
+      <choices><choice value="none"/><choice value="left"/><choice value="right"/></choices>
+      <default>'right'</default>
+      <summary>Show desktop button at the taskbar edge</summary>
+    </key>
+    <key name="tray-order" type="as">
+      <default>[]</default>
+      <summary>Tray item order, as 'r:role' (right box) or 'c:role' (center box)</summary>
+    </key>
+    <key name="super-opens-start" type="b">
+      <default>true</default>
+      <summary>Super key opens the Start menu instead of the overview</summary>
+    </key>
+    <key name="show-recommended" type="b">
+      <default>true</default>
+      <summary>Show the Recommended section</summary>
+    </key>
+    <key name="all-apps-view" type="s">
+      <choices><choice value="grid"/><choice value="list"/></choices>
+      <default>'grid'</default>
+      <summary>All apps view</summary>
+    </key>
+    <key name="pinned-expanded" type="b">
+      <default>false</default>
+      <summary>Pinned section shows all rows</summary>
+    </key>
+    <key name="taskbar-pinned" type="as">
+      <default>[]</default>
+      <summary>Apps pinned to the taskbar (desktop IDs)</summary>
+    </key>
+    <key name="start-pinned" type="as">
+      <default>[]</default>
+      <summary>Apps pinned to Start (desktop IDs)</summary>
+    </key>
+    <key name="pins-seeded" type="b">
+      <default>false</default>
+      <summary>Pins were seeded from GNOME favorites</summary>
+    </key>
+    <key name="known-apps" type="s">
+      <default>''</default>
+      <summary>JSON map of desktop ID to first-seen unix time</summary>
+    </key>
+  </schema>
+</schemalist>
