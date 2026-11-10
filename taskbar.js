@@ -107,7 +107,7 @@ class AppButton extends St.Button {
     }
 
     windows() {
-        return appWindows(this.app).sort((a, b) => b.get_user_time() - a.get_user_time());
+        return appWindows(this.app).sort((a, b) => a.get_stable_sequence() - b.get_stable_sequence());
     }
 
     sync() {
