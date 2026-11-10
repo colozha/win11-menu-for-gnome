@@ -1,3 +1,4 @@
+import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
@@ -26,10 +27,32 @@ const DEFAULT_START_PINS = [
 /** Acrylic: blur what's behind a translucent surface, so opacity reads as frosted glass, not ghosting. */
 function setBlur(actor, on) {
     const has = actor.get_effect('w11-blur');
-    if (on && !has)
+    if (on && !has) {
         actor.add_effect_with_name('w11-blur', new Shell.BlurEffect({mode: Shell.BlurMode.BACKGROUND, radius: 60, brightness: 0.9}));
-    else if (!on && has)
+        actor._w11BlurEvt = actor.connect('captured-event', () => {
+            kickRedraw(actor);
+            return Clutter.EVENT_PROPAGATE;
+        });
+    } else if (!on && has) {
         actor.remove_effect(has);
+        actor.disconnect(actor._w11BlurEvt);
+        actor._w11BlurEvt = 0;
+        actor._w11BlurTl?.stop();
+    }
+}
+
+/**
+ * Background blur samples the whole actor area, but a hover only triggers a clipped redraw of the
+ * hovered child; the rest of the framebuffer still holds last frame's content (old hover box
+ * included), which then gets blurred in as a ghost. Repaint the whole actor briefly after input.
+ */
+function kickRedraw(actor) {
+    if (!actor._w11BlurTl) {
+        actor._w11BlurTl = new Clutter.Timeline({actor, duration: 300});
+        actor._w11BlurTl.connect('new-frame', () => actor.queue_redraw());
+    }
+    actor._w11BlurTl.rewind();
+    actor._w11BlurTl.start();
 }
 
 export default class Win11Extension extends Extension {
