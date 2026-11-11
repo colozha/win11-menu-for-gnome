@@ -291,6 +291,18 @@ class Taskbar extends St.Widget {
         this.set_size(monitor.width, h);
         Main.layoutManager.addChrome(this, {affectsStruts: true, trackFullscreen: true});
 
+        // Acrylic backdrop (the extension puts the blur on blurLayer). The blur repeats its edge rows
+        // past its border, so on a bar shorter than the blur radius the top row would tint the whole
+        // bar, and windows animating past it (minimize) would make it flicker. blurLayer reaches one
+        // radius above the bar so the blur reads real content there; backdrop clips the result to the bar.
+        const reach = U.BLUR_RADIUS * sf;
+        this.backdrop = new St.Widget({clip_to_allocation: true, x: this.x, y: this.y, width: monitor.width, height: h});
+        this.blurLayer = new St.Widget({y: -reach, width: monitor.width, height: h + reach});
+        this.backdrop.add_child(this.blurLayer);
+        Main.layoutManager.uiGroup.insert_child_below(this.backdrop, this);
+        // trackFullscreen hides the bar; hide its backdrop with it.
+        this.bind_property('visible', this.backdrop, 'visible', GObject.BindingFlags.SYNC_CREATE);
+
         Shell.AppSystem.get_default().connectObject('app-state-changed', () => this.sync(), this);
         global.display.connectObject(
             'notify::focus-window', () => this._syncStates(),
@@ -305,6 +317,7 @@ class Taskbar extends St.Widget {
                 global.compositor.get_laters().remove(this._iconGeometryLater);
             this.preview.destroy();
             this._menuAnchor.destroy();
+            this.backdrop.destroy();
         });
 
         this.syncLayout();

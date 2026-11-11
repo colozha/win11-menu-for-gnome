@@ -7,6 +7,9 @@ export const THEME_COLORS = {
     light: {taskbar: '#f3f3f3', start: '#f9f9f9'},
 };
 
+/** Acrylic blur radius (Shell.BlurEffect), shared by the effect and the taskbar's blur layer. */
+export const BLUR_RADIUS = 60;
+
 const RECENT_DAYS = 7;
 
 /** '#rrggbb' + 0..100 → 'rgba(r, g, b, a)'. Falls back to black on bad input. */
