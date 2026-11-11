@@ -24,25 +24,20 @@ const DEFAULT_START_PINS = [
     'org.gnome.Calculator.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Console.desktop',
 ];
 
-/**
- * Acrylic: blur what's behind a translucent surface, so opacity reads as frosted glass, not ghosting.
- * The effect goes on `target` (default: `host` itself); input on `host` kicks a full redraw.
- */
-function setBlur(host, on, target = host) {
-    const has = target.get_effect('w11-blur');
+/** Acrylic: blur what's behind a translucent surface, so opacity reads as frosted glass, not ghosting. */
+function setBlur(actor, on) {
+    const has = actor.get_effect('w11-blur');
     if (on && !has) {
-        target.add_effect_with_name('w11-blur', new Shell.BlurEffect({
-            mode: Shell.BlurMode.BACKGROUND, radius: U.BLUR_RADIUS, brightness: 0.9,
-        }));
-        host._w11BlurEvt = host.connect('captured-event', () => {
-            kickRedraw(target);
+        actor.add_effect_with_name('w11-blur', new Shell.BlurEffect({mode: Shell.BlurMode.BACKGROUND, radius: U.BLUR_RADIUS, brightness: 0.9}));
+        actor._w11BlurEvt = actor.connect('captured-event', () => {
+            kickRedraw(actor);
             return Clutter.EVENT_PROPAGATE;
         });
     } else if (!on && has) {
-        target.remove_effect(has);
-        host.disconnect(host._w11BlurEvt);
-        host._w11BlurEvt = 0;
-        target._w11BlurTl?.stop();
+        actor.remove_effect(has);
+        actor.disconnect(actor._w11BlurEvt);
+        actor._w11BlurEvt = 0;
+        actor._w11BlurTl?.stop();
     }
 }
 
@@ -51,19 +46,13 @@ function setBlur(host, on, target = host) {
  * hovered child; the rest of the framebuffer still holds last frame's content (old hover box
  * included), which then gets blurred in as a ghost. Repaint the whole actor briefly after input.
  */
-function kickRedraw(actor, duration = 300) {
-    let tl = actor._w11BlurTl;
-    if (!tl) {
-        tl = actor._w11BlurTl = new Clutter.Timeline({actor, duration});
-        tl.connect('new-frame', () => actor.queue_redraw());
+function kickRedraw(actor) {
+    if (!actor._w11BlurTl) {
+        actor._w11BlurTl = new Clutter.Timeline({actor, duration: 300});
+        actor._w11BlurTl.connect('new-frame', () => actor.queue_redraw());
     }
-    // Don't let a short kick (hover) cut a longer one (window animation) short.
-    if (tl.is_playing() && tl.duration - tl.get_elapsed_time() >= duration)
-        return;
-    tl.stop();
-    tl.duration = duration;
-    tl.rewind();
-    tl.start();
+    actor._w11BlurTl.rewind();
+    actor._w11BlurTl.start();
 }
 
 export default class Win11Extension extends Extension {
@@ -89,23 +78,7 @@ export default class Win11Extension extends Extension {
             'changed::color-scheme', () => this._applyStyle(),
             'changed::accent-color', () => this._applyStyle(),
             this);
-        // Window animations behind a translucent surface only get clipped redraws, so the blur
-        // samples stale buffers and flickers; repaint the blurred surfaces fully while they run.
-        const kick = () => this._kickBlur();
-        global.window_manager.connectObject(
-            'minimize', kick, 'unminimize', kick, 'size-change', kick,
-            'map', kick, 'destroy', kick,
-            this);
         this._syncOverlayKey();
-    }
-
-    _kickBlur() {
-        // Minimize/unminimize animate for 400 ms; leave some margin.
-        const duration = Math.round(500 * St.Settings.get().slow_down_factor);
-        for (const a of [...this._taskbars.map(t => t.blurLayer), this.startMenu.actor]) {
-            if (a.get_effect('w11-blur'))
-                kickRedraw(a, duration);
-        }
     }
 
     disable() {
@@ -117,7 +90,6 @@ export default class Win11Extension extends Extension {
         Main.layoutManager.disconnectObject(this);
         this.settings.disconnectObject(this);
         this.iface.disconnectObject(this);
-        global.window_manager.disconnectObject(this);
         this._destroyTaskbars();
         this._showTopBar();
         this.startMenu.destroy();
@@ -195,7 +167,7 @@ export default class Win11Extension extends Extension {
         const taskbarBlur = s.get_int('taskbar-opacity') < 100;
         for (const t of this._taskbars) {
             t.set_style(`background-color: ${taskbarBg};${taskbarFg ? ` color: ${taskbarFg};` : ''}`);
-            setBlur(t, taskbarBlur, t.blurLayer);
+            t.setAcrylic(taskbarBlur);
             t.syncAccent();
         }
         this.startMenu.setColors(U.rgba(s.get_string('start-color') || defaults.start, s.get_int('start-opacity')),

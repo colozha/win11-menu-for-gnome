@@ -291,14 +291,22 @@ class Taskbar extends St.Widget {
         this.set_size(monitor.width, h);
         Main.layoutManager.addChrome(this, {affectsStruts: true, trackFullscreen: true});
 
-        // Acrylic backdrop (the extension puts the blur on blurLayer). The blur repeats its edge rows
-        // past its border, so on a bar shorter than the blur radius the top row would tint the whole
-        // bar, and windows animating past it (minimize) would make it flicker. blurLayer reaches one
-        // radius above the bar so the blur reads real content there; backdrop clips the result to the bar.
+        // Acrylic backdrop: a blurred clone of the windows + wallpaper behind the bar (see setAcrylic).
+        // Not BACKGROUND blur: that reads the framebuffer, which holds stale or not-yet-painted pixels
+        // wherever a frame is only partly redrawn, so it flickered during window animations and
+        // when menus above the bar opened/closed. The blur repeats its edge rows past its border, so
+        // on a bar shorter than the blur radius the top row would tint the whole bar; blurLayer reaches
+        // one radius above the bar so the blur reads real content there, and backdrop clips it to the bar.
         const reach = U.BLUR_RADIUS * sf;
         this.backdrop = new St.Widget({clip_to_allocation: true, x: this.x, y: this.y, width: monitor.width, height: h});
-        this.blurLayer = new St.Widget({y: -reach, width: monitor.width, height: h + reach});
-        this.backdrop.add_child(this.blurLayer);
+        this._blurLayer = new St.Widget({
+            clip_to_allocation: true, visible: false, y: -reach, width: monitor.width, height: h + reach,
+        });
+        this._blurLayer.add_child(new Clutter.Clone({source: global.window_group, x: -this.x, y: reach - this.y}));
+        this._blurLayer.add_effect(new Shell.BlurEffect({
+            mode: Shell.BlurMode.ACTOR, radius: U.BLUR_RADIUS, brightness: 0.9,
+        }));
+        this.backdrop.add_child(this._blurLayer);
         Main.layoutManager.uiGroup.insert_child_below(this.backdrop, this);
         // trackFullscreen hides the bar; hide its backdrop with it.
         this.bind_property('visible', this.backdrop, 'visible', GObject.BindingFlags.SYNC_CREATE);
@@ -403,6 +411,11 @@ class Taskbar extends St.Widget {
         this._deskLeft.visible = desk === 'left';
         this._deskRight.visible = desk === 'right';
         this.syncAccent();
+    }
+
+    /** Frosted-glass backdrop, for a translucent bar. Hidden, it costs nothing. */
+    setAcrylic(on) {
+        this._blurLayer.visible = on;
     }
 
     syncAccent() {
