@@ -206,10 +206,17 @@
 .w11-light .w11-user:hover, .w11-light .w11-icon-button:hover,
 .w11-light .w11-user:focus, .w11-light .w11-icon-button:focus { background-color: rgba(0, 0, 0, 0.05); }
 
-/* Scrollbar: thin, theme-tinted */
-.w11-start StScrollBar { padding: 2px; }
-.w11-dark .w11-start StScrollBar StButton#vhandle, .w11-start.w11-dark StScrollBar StButton#vhandle { background-color: rgba(255, 255, 255, 0.3); border-radius: 4px; }
-.w11-start.w11-light StScrollBar StButton#vhandle { background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; }
+/* Scrollbar: thin, faded until hovered (St has no CSS opacity, so alpha does it) */
+.w11-start StScrollBar { padding: 1px; min-width: 6px; }
+.w11-start StScrollBar > .vhandle { min-width: 4px; border: none; border-radius: 999px; }
+.w11-dark .w11-start StScrollBar > .vhandle, .w11-start.w11-dark StScrollBar > .vhandle { background-color: rgba(255, 255, 255, 0.1); }
+.w11-start.w11-light StScrollBar > .vhandle { background-color: rgba(0, 0, 0, 0.1); }
+.w11-dark .w11-start StScrollBar:hover > .vhandle, .w11-start.w11-dark StScrollBar:hover > .vhandle,
+.w11-dark .w11-start StScrollBar > .vhandle:hover, .w11-start.w11-dark StScrollBar > .vhandle:hover,
+.w11-dark .w11-start StScrollBar > .vhandle:active, .w11-start.w11-dark StScrollBar > .vhandle:active { background-color: rgba(255, 255, 255, 0.45); }
+.w11-start.w11-light StScrollBar:hover > .vhandle,
+.w11-start.w11-light StScrollBar > .vhandle:hover,
+.w11-start.w11-light StScrollBar > .vhandle:active { background-color: rgba(0, 0, 0, 0.45); }
 
 /* Popup menus we own (context, power, view, user) */
 .w11-menu.popup-menu .popup-menu-content { border-radius: 8px; padding: 4px; }
