@@ -7,7 +7,7 @@ import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 const OPEN_DELAY = 400;
-const CLOSE_DELAY = 300;
+const CLOSE_DELAY = 1000;
 const THUMB_W = 220;
 const THUMB_H = 130;
 const PEEK_DELAY = 400;
