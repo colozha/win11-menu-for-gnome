@@ -24,7 +24,14 @@ const TERMINALS = [
     'org.gnome.Ptyxis.desktop', 'org.gnome.Console.desktop', 'org.gnome.Terminal.desktop',
 ];
 
-const firstApp = ids => ids.map(id => Shell.AppSystem.get_default().lookup_app(id)).find(Boolean);
+const SPLIT_LAYOUTS = [
+    ['Side by side', 'columns', 'view-dual-symbolic'],
+    ['Stacked', 'rows', 'view-continuous-symbolic'],
+    ['Grid', 'grid', 'view-grid-symbolic'],
+    ['Main + stack', 'main', 'view-paged-symbolic'],
+];
+
+const firstApp =ids => ids.map(id => Shell.AppSystem.get_default().lookup_app(id)).find(Boolean);
 
 const appWindows = app => app.get_windows().filter(w => !w.skip_taskbar);
 
@@ -187,11 +194,44 @@ class AppButton extends St.Button {
         const wins = this.windows();
         if (wins.length) {
             menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+            menu.addAction(wins.length > 1 ? 'Minimize all windows' : 'Minimize window',
+                () => wins.forEach(w => w.minimize()),
+                'window-minimize-symbolic');
+            if (wins.length > 1) {
+                const split = new PopupMenu.PopupSubMenuMenuItem('Split windows', true);
+                split.icon.icon_name = 'view-grid-symbolic';
+                for (const [label, layout, icon] of SPLIT_LAYOUTS)
+                    split.menu.addAction(label, () => this._split(layout), icon);
+                menu.addMenuItem(split);
+            }
             menu.addAction(wins.length > 1 ? 'Close all windows' : 'Close window',
                 () => wins.forEach(w => w.delete(global.get_current_time())),
                 'window-close-symbolic');
         }
         openMenu(menu);
+    }
+
+    /** Tile all of this app's windows over this taskbar's monitor, on the current workspace. */
+    _split(layout) {
+        const wins = this.windows();
+        const monitor = this._taskbar.monitor.index;
+        const ws = global.workspace_manager.get_active_workspace();
+        const rects = U.splitRects(Main.layoutManager.getWorkAreaForMonitor(monitor), wins.length, layout);
+        wins.forEach((w, i) => {
+            w.unminimize();
+            if (w.is_fullscreen())
+                w.unmake_fullscreen();
+            if (w.is_maximized())
+                w.unmaximize();
+            if (!w.is_on_all_workspaces() && w.get_workspace() !== ws)
+                w.change_workspace(ws);
+            if (w.get_monitor() !== monitor)
+                w.move_to_monitor(monitor);
+            const r = rects[i];
+            w.move_resize_frame(true, r.x, r.y, r.width, r.height);
+            w.raise();
+        });
+        Main.activateWindow(wins[0]);
     }
 });
 

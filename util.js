@@ -99,6 +99,42 @@ export function moveTrayEntry(list, index, delta) {
     return out;
 }
 
+/** Cut [start, start+len) into n integer [offset, size] spans that exactly cover it. */
+function cuts(start, len, n) {
+    const at = i => start + Math.round(i * len / n);
+    return Array.from({length: n}, (_, i) => [at(i), at(i + 1) - at(i)]);
+}
+
+/**
+ * Tile `area` ({x, y, width, height}) into n rects that exactly cover it.
+ * layout: 'columns' | 'rows' | 'grid' | 'main' (first window left half, rest stacked right).
+ */
+export function splitRects(area, n, layout) {
+    const {x, y, width, height} = area;
+    const cols = (ys, yh, count) => cuts(x, width, count).map(([cx, cw]) => ({x: cx, y: ys, width: cw, height: yh}));
+    if (n <= 1)
+        return [{x, y, width, height}];
+    switch (layout) {
+    case 'rows':
+        return cuts(y, height, n).map(([ry, rh]) => ({x, y: ry, width, height: rh}));
+    case 'grid': {
+        const perRow = Math.ceil(Math.sqrt(n));
+        const rows = Math.ceil(n / perRow);
+        return cuts(y, height, rows).flatMap(([ry, rh], r) =>
+            cols(ry, rh, r < rows - 1 ? perRow : n - perRow * (rows - 1)));
+    }
+    case 'main': {
+        const [[lx, lw], [rx, rw]] = cuts(x, width, 2);
+        return [
+            {x: lx, y, width: lw, height},
+            ...cuts(y, height, n - 1).map(([ry, rh]) => ({x: rx, y: ry, width: rw, height: rh})),
+        ];
+    }
+    default:
+        return cols(y, height, n);
+    }
+}
+
 export function moveToFront(list, id) {
     return [id, ...list.filter(x => x !== id)];
 }

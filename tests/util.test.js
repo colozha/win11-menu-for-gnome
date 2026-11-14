@@ -79,4 +79,13 @@ eq(U.moveTrayEntry(tray, 1, 1), ['r:a', 'c:d', 'c:b'], 'tray down across boundar
 eq(U.moveTrayEntry(tray, 0, -1), tray, 'tray move past start is a no-op');
 eq(U.moveTrayEntry(tray, 2, 1), tray, 'tray move past end is a no-op');
 
+const area = {x: 0, y: 0, width: 1000, height: 600};
+const r = (x, y, width, height) => ({x, y, width, height});
+eq(U.splitRects(area, 2, 'columns'), [r(0, 0, 500, 600), r(500, 0, 500, 600)], 'split columns');
+eq(U.splitRects(area, 3, 'rows'), [r(0, 0, 1000, 200), r(0, 200, 1000, 200), r(0, 400, 1000, 200)], 'split rows');
+eq(U.splitRects(area, 3, 'grid'), [r(0, 0, 500, 300), r(500, 0, 500, 300), r(0, 300, 1000, 300)], 'split grid widens last row');
+eq(U.splitRects(area, 3, 'main'), [r(0, 0, 500, 600), r(500, 0, 500, 300), r(500, 300, 500, 300)], 'split main + stack');
+eq(U.splitRects({x: 10, y: 0, width: 1001, height: 1}, 2, 'columns'), [r(10, 0, 501, 1), r(511, 0, 500, 1)], 'split covers odd width');
+eq(U.splitRects(area, 1, 'grid'), [area], 'split single');
+
 print('util.test.js: all passed');
