@@ -358,6 +358,12 @@ class Taskbar extends St.Widget {
             'window-marked-urgent', () => this._syncStates(),
             'window-entered-monitor', () => this.queueIconGeometry(),
             this);
+        // The overview hides window_group, but our clone would still force those windows to paint,
+        // which fights the overview's exit animation (the picked window flickers/zooms in a loop).
+        Main.overview.connectObject(
+            'showing', () => this._syncBlurLayer(),
+            'hidden', () => this._syncBlurLayer(),
+            this);
         this._appList.connect('notify::allocation', () => this.queueIconGeometry());
         this.connect('notify::mapped', () => this.queueIconGeometry());
         this.connect('destroy', () => {
@@ -455,7 +461,12 @@ class Taskbar extends St.Widget {
 
     /** Frosted-glass backdrop, for a translucent bar. Hidden, it costs nothing. */
     setAcrylic(on) {
-        this._blurLayer.visible = on;
+        this._acrylic = on;
+        this._syncBlurLayer();
+    }
+
+    _syncBlurLayer() {
+        this._blurLayer.visible = !!this._acrylic && !Main.overview.visible;
     }
 
     syncAccent() {
