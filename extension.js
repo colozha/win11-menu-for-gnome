@@ -200,12 +200,19 @@ export default class Win11Extension extends Extension {
         const box = Main.layoutManager.panelBox;
         Main.layoutManager.untrackChrome(box);
         box.hide();
+        // The taskbar replaces the overview dash; height 0 so the overview reclaims its space.
+        const dash = Main.overview.dash;
+        dash.hide();
+        dash.height = 0;
     }
 
     _showTopBar() {
         const box = Main.layoutManager.panelBox;
         box.show();
         Main.layoutManager.trackChrome(box, {affectsStruts: true, trackFullscreen: true});
+        const dash = Main.overview.dash;
+        dash.height = -1;
+        dash.show();
     }
 
     _moveTray(taskbar) {
