@@ -11,6 +11,7 @@ import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import {Taskbar, Clock} from './taskbar.js';
 import {StartMenu} from './startMenu.js';
 import {TrayReorder} from './reorder.js';
+import {StickyNotes} from './stickyNotes.js';
 import * as U from './util.js';
 
 const STYLE_KEYS = [
@@ -70,6 +71,7 @@ export default class Win11Extension extends Extension {
         this.startMenu = new StartMenu(this);
         this._hideTopBar();
         this._buildTaskbars();
+        this.stickyNotes = new StickyNotes(this);
 
         Shell.AppSystem.get_default().connectObject('installed-changed', () => this._updateKnown(), this);
         Main.layoutManager.connectObject('monitors-changed', () => this._buildTaskbars(), this);
@@ -82,6 +84,8 @@ export default class Win11Extension extends Extension {
     }
 
     disable() {
+        this.stickyNotes.destroy(); // first: flushes a pending save
+        this.stickyNotes = null;
         this._unblockOverlayKey();
         if (this._syncId)
             GLib.source_remove(this._syncId);

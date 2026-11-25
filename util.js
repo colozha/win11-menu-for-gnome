@@ -217,3 +217,67 @@ export function recentFiles(limit, path = GLib.build_filenamev([GLib.get_user_da
     items.sort((a, b) => b.modified - a.modified);
     return items.slice(0, limit);
 }
+
+// ---------- sticky notes ----------
+
+/** Windows 11 Sticky Notes palette. `text` is the ink color on that body. */
+export const NOTE_COLORS = [
+    {id: 'yellow', name: 'Yellow', body: '#fff7d1', header: '#fff2ab', text: '#1a1a1a'},
+    {id: 'green', name: 'Green', body: '#e4f9e0', header: '#cbf1c4', text: '#1a1a1a'},
+    {id: 'pink', name: 'Pink', body: '#ffe4f1', header: '#ffcce5', text: '#1a1a1a'},
+    {id: 'purple', name: 'Purple', body: '#f2e6ff', header: '#e7cfff', text: '#1a1a1a'},
+    {id: 'blue', name: 'Blue', body: '#e2f1ff', header: '#cde9ff', text: '#1a1a1a'},
+    {id: 'gray', name: 'Gray', body: '#f3f2f1', header: '#e1dfdd', text: '#1a1a1a'},
+    {id: 'charcoal', name: 'Charcoal', body: '#454545', header: '#3b3b3b', text: '#ffffff'},
+];
+export const NOTE_MIN = {w: 200, h: 160};
+
+export function noteColor(id) {
+    return NOTE_COLORS.find(c => c.id === id) ?? NOTE_COLORS[0];
+}
+
+/** Parse the notes file; null when the JSON itself is broken (caller must not overwrite it). */
+export function parseNotes(json) {
+    let data;
+    try {
+        data = JSON.parse(json);
+    } catch {
+        return null;
+    }
+    const list = Array.isArray(data?.notes) ? data.notes : [];
+    const num = (v, d) => (Number.isFinite(v) ? Math.round(v) : d);
+    return list.filter(n => n && typeof n.id === 'string' && n.id).map(n => ({
+        id: n.id,
+        text: typeof n.text === 'string' ? n.text : '',
+        color: noteColor(n.color).id,
+        x: num(n.x, 0),
+        y: num(n.y, 0),
+        w: Math.max(NOTE_MIN.w, num(n.w, 300)),
+        h: Math.max(NOTE_MIN.h, num(n.h, 300)),
+        hidden: n.hidden === true,
+        onTop: n.onTop === true,
+        modified: num(n.modified, 0),
+    }));
+}
+
+/** Fit {x,y,w,h} into the area it overlaps most (else the first), shrinking if too big. */
+export function clampRect(r, areas) {
+    if (!areas.length)
+        return r;
+    const overlap = a => Math.max(0, Math.min(r.x + r.w, a.x + a.width) - Math.max(r.x, a.x)) *
+        Math.max(0, Math.min(r.y + r.h, a.y + a.height) - Math.max(r.y, a.y));
+    const area = areas.reduce((best, a) => (overlap(a) > overlap(best) ? a : best), areas[0]);
+    const w = Math.min(r.w, area.width);
+    const h = Math.min(r.h, area.height);
+    const x = Math.max(area.x, Math.min(r.x, area.x + area.width - w));
+    const y = Math.max(area.y, Math.min(r.y, area.y + area.height - h));
+    return {x, y, w, h};
+}
+
+/** List label: first non-empty line, truncated. */
+export function noteTitle(text) {
+    const line = (text ?? '').split('\n').map(l => l.trim()).find(l => l) ?? '';
+    if (!line)
+        return 'Empty note';
+    return line.length > 40 ? `${line.slice(0, 40).trimEnd()}…` : line;
+}

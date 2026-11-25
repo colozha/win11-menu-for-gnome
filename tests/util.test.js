@@ -88,4 +88,21 @@ eq(U.splitRects(area, 3, 'main'), [r(0, 0, 500, 600), r(500, 0, 500, 300), r(500
 eq(U.splitRects({x: 10, y: 0, width: 1001, height: 1}, 2, 'columns'), [r(10, 0, 501, 1), r(511, 0, 500, 1)], 'split covers odd width');
 eq(U.splitRects(area, 1, 'grid'), [area], 'split single');
 
+
+eq(U.parseNotes('{oops'), null, 'notes: broken json');
+eq(U.parseNotes('{}'), [], 'notes: empty');
+eq(U.parseNotes('{"notes":[{"id":"a","color":"neon","w":10},{"text":"no id"}]}'),
+    [{id: 'a', text: '', color: 'yellow', x: 0, y: 0, w: 200, h: 300, hidden: false, onTop: false, modified: 0}],
+    'notes: defaults, bad color, min size, invalid dropped');
+
+const mon = [{x: 0, y: 0, width: 1920, height: 1040}];
+eq(U.clampRect({x: 100, y: 100, w: 300, h: 300}, mon), {x: 100, y: 100, w: 300, h: 300}, 'clamp: valid untouched');
+eq(U.clampRect({x: 2500, y: 100, w: 300, h: 300}, mon), {x: 1620, y: 100, w: 300, h: 300}, 'clamp: monitor gone');
+eq(U.clampRect({x: 0, y: 0, w: 3000, h: 2000}, mon), {x: 0, y: 0, w: 1920, h: 1040}, 'clamp: too big');
+eq(U.clampRect({x: 2000, y: 0, w: 300, h: 300}, [...mon, {x: 1920, y: 0, width: 1280, height: 1000}]),
+    {x: 2000, y: 0, w: 300, h: 300}, 'clamp: second monitor');
+
+eq(U.noteTitle('\n  Hello world \nmore'), 'Hello world', 'title: first line');
+eq(U.noteTitle('  '), 'Empty note', 'title: empty');
+eq(U.noteTitle('x'.repeat(50)), `${'x'.repeat(40)}…`, 'title: truncated');
 print('util.test.js: all passed');

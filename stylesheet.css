@@ -227,3 +227,50 @@
 .w11-menu.w11-dark .popup-menu-item:hover, .w11-menu.w11-dark .popup-menu-item:focus { background-color: rgba(255, 255, 255, 0.07); }
 .w11-menu.w11-light .popup-menu-item:hover, .w11-menu.w11-light .popup-menu-item:focus { background-color: rgba(0, 0, 0, 0.05); color: #1a1a1a; }
 .w11-menu .popup-separator-menu-item-separator { background-color: rgba(128, 128, 128, 0.25); }
+
+/* ---------- Sticky notes ---------- */
+/* Body, header and ink colors come inline from util.NOTE_COLORS, independent of the shell theme. */
+.w11-note {
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  font-size: 0.95em;
+}
+.w11-note-header { border-radius: 7px 7px 0 0; padding: 2px; spacing: 2px; }
+.w11-note-btn { width: 32px; height: 28px; border-radius: 4px; transition-duration: 120ms; }
+.w11-note-btn:hover, .w11-note-btn:focus { background-color: rgba(0, 0, 0, 0.07); }
+.w11-note-btn:active, .w11-note-btn:checked { background-color: rgba(0, 0, 0, 0.12); }
+.w11-note-dark .w11-note-btn:hover, .w11-note-dark .w11-note-btn:focus { background-color: rgba(255, 255, 255, 0.1); }
+.w11-note-dark .w11-note-btn:active, .w11-note-dark .w11-note-btn:checked { background-color: rgba(255, 255, 255, 0.18); }
+
+.w11-note-entry, .w11-note-entry:focus, .w11-note-entry:hover {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 10px 14px 4px;
+  selection-background-color: rgba(0, 0, 0, 0.18);
+}
+.w11-note-dark .w11-note-entry { selection-background-color: rgba(255, 255, 255, 0.3); }
+.w11-note-entry StLabel.hint-text { color: rgba(0, 0, 0, 0.5); }
+.w11-note-dark .w11-note-entry StLabel.hint-text { color: rgba(255, 255, 255, 0.6); }
+
+.w11-note-scroll StScrollBar { padding: 1px; min-width: 6px; }
+.w11-note-scroll StScrollBar > .vhandle { min-width: 4px; border: none; border-radius: 999px; background-color: rgba(0, 0, 0, 0.18); }
+.w11-note-dark .w11-note-scroll StScrollBar > .vhandle { background-color: rgba(255, 255, 255, 0.25); }
+
+.w11-note-grip { width: 16px; height: 16px; border-radius: 0 0 7px 0; }
+.w11-note-grip:hover { background-color: rgba(0, 0, 0, 0.08); }
+.w11-note-dark .w11-note-grip:hover { background-color: rgba(255, 255, 255, 0.12); }
+
+.w11-note-swatches { spacing: 8px; padding: 4px 8px; }
+.w11-note-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+}
+.w11-note-swatch:hover, .w11-note-swatch:focus { border: 2px solid -st-accent-color; }
+.w11-note-swatch.w11-active { border: 2px solid -st-accent-color; }
+
+.w11-note-dot { width: 10px; height: 10px; border-radius: 999px; border: 1px solid rgba(128, 128, 128, 0.45); }
+.w11-note-hidden { color: rgba(128, 128, 128, 0.9); }

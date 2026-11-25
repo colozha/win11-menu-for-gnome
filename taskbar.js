@@ -435,6 +435,28 @@ class Taskbar extends St.Widget {
         menu.addAction('Activities overview', () => Main.overview.toggle(), 'view-app-grid-symbolic');
 
         menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+        const notes = this.ext.stickyNotes;
+        menu.addAction('New sticky note', () => notes.create(), 'list-add-symbolic');
+        if (notes.list().length) {
+            const sub = new PopupMenu.PopupSubMenuMenuItem('Sticky notes', true);
+            sub.icon.icon_name = 'accessories-text-editor-symbolic';
+            for (const n of notes.list()) {
+                const item = sub.menu.addAction(U.noteTitle(n.text), () => notes.show(n.id));
+                const dot = new St.Widget({style_class: 'w11-note-dot', style: `background-color: ${U.noteColor(n.color).header};`,
+                    y_align: Clutter.ActorAlign.CENTER});
+                item.insert_child_at_index(dot, 1);
+                if (n.hidden)
+                    item.label.add_style_class_name('w11-note-hidden');
+            }
+            sub.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+            if (notes.list().some(n => n.hidden))
+                sub.menu.addAction('Show all notes', () => notes.setAllHidden(false));
+            if (notes.list().some(n => !n.hidden))
+                sub.menu.addAction('Hide all notes', () => notes.setAllHidden(true));
+            menu.addMenuItem(sub);
+        }
+
+        menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         const settings = firstApp(['org.gnome.Settings.desktop']);
         if (settings)
             menu.addAction('Settings', () => settings.activate(), 'emblem-system-symbolic');
